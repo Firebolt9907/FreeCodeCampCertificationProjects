@@ -1,0 +1,30 @@
+@media (max-width: 400px) {
+    #navbar {
+        width: 100%;
+        display: block;
+        margin: 0;
+        padding: 0;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 400px) {
+    body {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #navbar {
+        width: 150px;
+        float: left;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+        margin-right: 10px;
+    }
+
+    #main-doc {
+        margin-left: 150px;
+    }
+}
