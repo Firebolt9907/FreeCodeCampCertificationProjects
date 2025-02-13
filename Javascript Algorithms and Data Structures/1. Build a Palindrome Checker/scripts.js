@@ -16,7 +16,7 @@ checkButton.addEventListener('click', () => {
 function palindromeChecker(text) {
     var alert = "";
     if (text === "") {
-        alert = "Please enter a word or phrase";
+        alert = "Please input a value";
         return Output(true, "Alert: " + alert, false);
     }
     return [true, "", cleanedText === reversedText];
