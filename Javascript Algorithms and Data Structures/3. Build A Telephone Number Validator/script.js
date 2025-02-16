@@ -1,56 +1,86 @@
 const userInput = document.getElementById('user-input');
-const checkButton = document.getElementById('check-btn');
-const clearButton = document.getElementById('clear-btn');
-const resultText = document.getElementById('results-div');
+const checkBtn = document.getElementById('check-btn');
+const clearBtn = document.getElementById('clear-btn');
+const resultsDiv = document.getElementById('results-div');
 
-clearButton.addEventListener('click', () => {
+clearBtn.addEventListener('click', () => {
     userInput.value = "";
-    resultText.innerHTML = "";
+    resultsDiv.innerHTML = "";
 });
 
-checkButton.addEventListener('click', () => {
+checkBtn.addEventListener('click', () => {
     const text = userInput.value;
     if (!text || text.trim() === "") {
         alert("Please provide a phone number");
         return;
     }
     const result = telephoneCheck(text);
-    resultText.innerHTML = result;
+    resultsDiv.innerHTML = result.toString();
 });
 
 function telephoneCheck(text) {
-    modText = text;
-    const regex = /[^0-9-()-\s-\-]/g;
-    var matchesRegex = regex.test(text);
-    if (matchesRegex) {
+    var modText = text;
+    var number = text.replace(/[^0-9]/g, '');
+
+    if (checkValidCharacters(modText)) {
+        console.log("Invalid US number (1): " + text);
         return "Invalid US number: " + text;
     }
-    var number = Number(text.replace(/[^0-9]/g, ''));
-    if (number.toString().length != 10 || number.toString().length != 11) {
+
+    if (checkNumberLength(number)) {
+        console.log("Invalid US number (2): " + text);
         return "Invalid US number: " + text;
     }
-    if (number.toString().length === 11) {
-        if (number.toString().charAt(0) != 1) {
+
+    if (number.length === 11) {
+        if (text.charAt(0) != 1) {
+            console.log("Invalid US number (3): " + text);
             return "Invalid US number: " + text;
         }
-        number -= 10^10;
         modText = text.split('').slice(1).join('');
     }
-    if (modText.charAt(0) === "(" || modText.charAt(4) === ")") {
-        if (!(modText.charAt(0) === "(" && modText.charAt(4) === ")")) {
+
+    var parenthesesCheck = checkParentheses(modText);
+    if (parenthesesCheck[0]) {
+        if (!(parenthesesCheck[1])) {
+            console.log("Invalid US number (4): " + text);
             return "Invalid US number: " + text;
         }
         modText = modText.replace(/[()]/g, '');
     }
-    if (modText.split('-').length > 3) {
+
+    modText = modText.replace(" ", '');
+    var dashesCheck = checkDashes(modText);
+    if (dashesCheck[0]) {
+        console.log("Invalid US number (5): " + text);
         return "Invalid US number: " + text;
     }
-    if (modText.split('-').length === 3) {
-        var splitText = modText.split('-');
-        if (splitText[0].length != 3 || splitText[1].length != 3 || splitText[2].length != 4) {
+
+    if (dashesCheck[1]) {
+        if (!(dashesCheck[2])) {
+            console.log("Invalid US number (6): " + text);
             return "Invalid US number: " + text;
         }
         modText = modText.replace("-", '');
     }
     return "Valid US number: " + text;
+}
+
+function checkValidCharacters (modText) {
+    const regex = /[^0-9-()-\s-\-]/g;
+    var matchesRegex = regex.test(modText);
+    return matchesRegex;
+}
+
+function checkNumberLength(number) {
+    return number.length != 10 && number.length != 11;
+}
+
+function checkParentheses(modText) {
+    return [modText.charAt(0) === "(" || modText.charAt(4) === ")", modText.charAt(0) === "(" && modText.charAt(4) === ")"];
+}
+
+function checkDashes(modText) {
+    var splitText = modText.split('-');
+    return [modText.split('-').length > 3, modText.split('-').length === 3, splitText[0].length == 3 && splitText[1].length == 3 && splitText[2].length == 4];
 }
